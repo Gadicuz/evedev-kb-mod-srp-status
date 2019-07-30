@@ -68,9 +68,12 @@ class srp_status
         $err = curl_error($ch);
         curl_close($ch);
 
-        if ( isset($status) and is_string($status->status) and 
+        if ( isset($status) and is_string($status->status) and is_string($status->text) and
              (is_null($status->url) or filter_var($status->url, FILTER_VALIDATE_URL)) )
-            $pkd->addMenuItem("link", $status->status, $status->url);
+        {
+            if ( $status->status != 'Completed' ) $pkd->page->setCachable(false); // don't cache if request still in progress
+            $pkd->addMenuItem("link", $status->text, $status->url);
+        }
         else
             $pkd->addMenuItem("link", "service failure");
     }
